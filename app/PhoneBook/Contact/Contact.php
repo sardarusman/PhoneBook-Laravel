@@ -8,7 +8,7 @@ use Illuminate\Http\Request;
 
 use App\Http\Requests;
 
-use App\Contacts;
+use App\PhoneBook\Contacts;
 
 class Contact implements ContactInterface
 {
