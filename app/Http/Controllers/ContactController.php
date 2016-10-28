@@ -8,15 +8,16 @@ use App\Http\Requests;
 
 use App\Http\Controllers\Controller;
 
-use App\Contacts;
+use App\PhoneBook\Contact\Contact;
 
 class ContactController extends Controller
 {
-    protected $contacts;
+
+    protected $contact;
     
-    public function __construct(Contacts $contacts)
+    public function __construct(Contact $contact)
     {
-        $this->contacts = $contacts;
+        $this->contact = $contact;
     }
 
     public function home()
@@ -27,22 +28,19 @@ class ContactController extends Controller
     public function add()
     {
 
-        return view('Contact/create');
+        return view('contact/create');
     }
 
     public function store(Request $request)
     {
-
         $this->validate($request, [
 
-            'name'     =>   'bail|required',
-            'phone'    =>   'required|min:10|numeric',
-            'notes'    =>   'max:255',
+        'name'     =>   'bail|required',
+        'phone'    =>   'required|min:10|numeric',
+        'notes'    =>   'max:255',
+        ]);
 
-            ]);
-
-        $data=array_merge($request->all(), array("user_id"=>\Auth::user()->id));
-        $this->contacts->create($data);
+        $this->contact->store($request);
         return redirect("contacts")->with('flash_message', 'Contact has been created successfully.');
     }
     
@@ -51,17 +49,16 @@ class ContactController extends Controller
     public function index()
     {
 
-           $userId    = \Auth::user()->id;
-           $contacts   = $this->contacts->Where('user_id', $userId)->get();
-           return view('Contact.list')->with('contacts', $contacts);
+           $contacts   = $this->contact->index();
+           return view('contact.list')->with('contacts', $contacts);
     }
   
-  // Edit Contact for update
+  // // Edit Contact for update
 
     public function edit($contactId)
     {
-         $contacts    = $this->contacts->findOrFail($contactId);
-        return view('Contact.edit')->with('contacts', $contacts);
+          $contacts    = $this->contact->edit($contactId);
+          return view('contact.edit')->with('contacts', $contacts);
     }
  
     // Update Contacts
@@ -75,8 +72,7 @@ class ContactController extends Controller
             'notes'   => 'max:255'
         ]);
 
-        $contacts    = $this->contacts->findOrFail($contactId);
-        $contacts->update($request->all());
+        $this->contact->update($request, $contactId);
         return redirect("contacts")->with('flash_message', 'Contact has been updated successfully.'); // Redirect
     }
     
@@ -85,8 +81,7 @@ class ContactController extends Controller
     public function delete($contactId)
     {
     
-        $contacts    = $this->contacts->find($contactId);
-        $contacts->delete();
+        $this->contact->delete($contactId);
         return redirect("contacts")->with('flash_message', 'Contact has been deleted successfully.');
     }
 }
