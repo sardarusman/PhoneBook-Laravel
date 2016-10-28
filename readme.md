@@ -10,9 +10,6 @@
 ## Controllers:
 We create one controller called "ContactController" to perform functions for add,update and delete the contacts.
 
-##PhoneBook:
-We create the Phonebook folder in app folder which contains the interface and business logic model which intract with controller and model. 
-
 ## Model:
 We create eloquent contacts model for adding and updating the record in database.
 
